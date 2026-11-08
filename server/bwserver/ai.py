@@ -168,9 +168,21 @@ def unverified_numbers(reply, evidence_text):
 
 
 # ------------------------------------------------------------------ conversazione
+def fake_llm(eng):
+    """Assistente finto, solo per la modalità demo e per le prove automatiche dell'app."""
+    def call(messages):
+        text = messages[-1]["content"].lower()
+        if "avvis" in text:
+            return json.dumps({"reply": "Ho preparato l'avviso: controllalo e conferma.",
+                               "calls": [{"tool": "create_alert", "args": {"sym": "AAPL", "op": "<", "value": 100}}]})
+        return json.dumps({"reply": "Sono l'assistente di prova. Chiedimi di creare un avviso.", "calls": []})
+    return call
+
+
 def chat(eng, history, text, llm=None, max_rounds=3):
     """Una domanda di Giovanni -> {reply, proposals, tools_used, verified}."""
-    llm = llm or openrouter_llm(eng.settings)
+    if llm is None:
+        llm = fake_llm(eng) if eng.settings.get("fake_ai") else openrouter_llm(eng.settings)
     system = build_system(eng)
     msgs = [{"role": "system", "content": system}]
     for h in (history or [])[-8:]:

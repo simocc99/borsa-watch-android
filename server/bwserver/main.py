@@ -18,6 +18,9 @@ def build(folder: Path, demo=False):
     settings = Settings(folder)
     store = Store(folder / "borsa.db")
     source = DemoSource() if demo else YahooSource()
+    if demo:
+        settings.values["fake_ai"] = True       # solo in memoria
+        settings.values["openrouter_key"] = settings.values.get("openrouter_key") or "demo"
     eng = Engine(settings, store, source, make_push(settings))
     # alla prima accensione, se accanto al programma c'è tickers.txt, lo importa
     if not store.tickers():

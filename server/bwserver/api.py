@@ -8,7 +8,7 @@ import json
 import socket
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from . import ai, market
 from . import tools as T
@@ -95,7 +95,7 @@ class Handler(BaseHTTPRequestHandler):
     def _route(self, method):
         u = urlparse(self.path)
         q = {k: v[0] for k, v in parse_qs(u.query).items()}
-        path = u.path.rstrip("/") or "/"
+        path = unquote(u.path).rstrip("/") or "/"
         try:
             if path == "/":
                 return self._home(method)
