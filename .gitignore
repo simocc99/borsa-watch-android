@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+.gradle/
+**/build/
+local.properties
+*.jks
+*.keystore
+google-services.json
+fcm*.json
+settings.json
+*.db
+.DS_Store
+.idea/
