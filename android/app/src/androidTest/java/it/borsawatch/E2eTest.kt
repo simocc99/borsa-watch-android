@@ -50,6 +50,10 @@ class E2eTest {
     @After fun stop() { scenario.close() }
 
     @Test fun fullFlow() {
+        try { flow() } catch (t: Throwable) { shot("zz_errore"); throw t }
+    }
+
+    private fun flow() {
         // 1) la lista arriva dal server
         rule.waitUntilAtLeastOneExists(hasText("Apple"), 40_000)
         shot("01_titoli")
@@ -72,6 +76,7 @@ class E2eTest {
         rule.waitUntilAtLeastOneExists(hasText("Scrivi qui…"), 10_000)
         rule.onNodeWithText("Scrivi qui…").performTextInput("Avvisami se Apple scende sotto 100")
         rule.onNodeWithContentDescription("Invia").performClick()
+        shot("05a_dopo_invio")
         rule.waitUntilAtLeastOneExists(hasText("Da confermare"), 40_000)
         shot("05_assistente_proposta")
         rule.onNodeWithText("Conferma").performClick()

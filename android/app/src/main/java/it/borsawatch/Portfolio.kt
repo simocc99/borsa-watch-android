@@ -91,7 +91,7 @@ fun PortfolioScreen(vm: MainViewModel, onOpen: (String) -> Unit, onGoSettings: (
                 item { TopFlop(all, onOpen) }
                 item {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf("all" to "Tutti", "best" to "Salgono", "worst" to "Scendono", "alerts" to "Con avviso").forEach { (k, label) ->
+                        listOf("all" to "Tutti", "best" to "Salgono", "worst" to "Scendono", "alerts" to "Avvisi").forEach { (k, label) ->
                             FilterChip(
                                 selected = filter == k, onClick = { filter = k },
                                 label = { Text(label, style = MaterialTheme.typography.bodyMedium) },

@@ -96,3 +96,11 @@ def test_ai_missing_key_is_503(api):
 def test_local_home_shows_pairing_code(api):
     html = urllib.request.urlopen(api.base + "/").read().decode()
     assert api.eng.settings["token"] in html and "Borsa Watch" in html
+
+
+def test_demo_fake_assistant_end_to_end(api):
+    api.eng.settings.values["fake_ai"] = True
+    code, r = api("POST", "/api/ai/chat", {"text": "Avvisami se Apple scende sotto 100", "history": []})
+    assert code == 200 and r["proposals"] and r["proposals"][0]["tool"] == "create_alert", r
+    code, r2 = api("POST", "/api/ai/confirm", {"id": r["proposals"][0]["id"], "accept": True})
+    assert code == 200 and api.eng.store.alerts()

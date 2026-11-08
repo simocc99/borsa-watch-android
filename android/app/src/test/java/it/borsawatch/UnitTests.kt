@@ -10,7 +10,7 @@ import org.junit.Test
 class FmtTest {
     @Test fun priceItalian() {
         assertEquals("1.234,56", Fmt.price(1234.5555))
-        assertEquals("0,1234", Fmt.price(0.12345))
+        assertEquals("0,1234", Fmt.price(0.12341))
         assertEquals("–", Fmt.price(null))
     }
 

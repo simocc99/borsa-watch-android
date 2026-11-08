@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
@@ -57,6 +58,7 @@ fun AssistantScreen(vm: MainViewModel) {
     var input by rememberSaveable { mutableStateOf("") }
     val listState = rememberLazyListState()
     val ready = vm.snap?.aiReady == true
+    val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(vm.chat.size, vm.chatBusy) {
         if (vm.chat.isNotEmpty()) listState.animateScrollToItem(vm.chat.size)
@@ -65,6 +67,7 @@ fun AssistantScreen(vm: MainViewModel) {
     fun send(text: String) {
         vm.sendChat(text)
         input = ""
+        keyboard?.hide()
     }
 
     Column(Modifier.fillMaxSize().imePadding()) {
