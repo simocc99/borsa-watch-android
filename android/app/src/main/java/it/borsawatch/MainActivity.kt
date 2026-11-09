@@ -104,7 +104,7 @@ fun BorsaRoot(vm: MainViewModel) {
     BackHandler(enabled = detail != null) { detail = null }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbar) },
+        snackbarHost = { SnackbarHost(snackbar, modifier = Modifier.padding(bottom = if (tab == 2 && detail == null) 76.dp else 0.dp)) },
         bottomBar = {
             if (detail == null) {
                 NavigationBar(containerColor = androidx.compose.ui.graphics.Color.White) {

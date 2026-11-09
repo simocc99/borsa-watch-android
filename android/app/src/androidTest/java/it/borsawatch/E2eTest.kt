@@ -74,6 +74,7 @@ class E2eTest {
         rule.onNodeWithContentDescription("Indietro").performClick()
         rule.onNodeWithText("Assistente").performClick()
         rule.waitUntilAtLeastOneExists(hasText("Scrivi qui…"), 10_000)
+        rule.waitUntil(15_000) { rule.onAllNodesWithText("Avviso creato").fetchSemanticsNodes().isEmpty() }
         rule.onNodeWithText("Scrivi qui…").performTextInput("Avvisami se Apple scende sotto 100")
         rule.onNodeWithContentDescription("Invia").performClick()
         shot("05a_dopo_invio")
