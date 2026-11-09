@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -124,13 +125,13 @@ fun Banner(text: String, modifier: Modifier = Modifier, warn: Boolean = false) {
 fun BigButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, filled: Boolean = true, enabled: Boolean = true) {
     if (filled) {
         Button(
-            onClick = onClick, enabled = enabled, modifier = modifier.height(52.dp), shape = RoundedCornerShape(14.dp),
+            onClick = onClick, enabled = enabled, modifier = modifier.heightIn(min = 52.dp), shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Blue)
-        ) { Text(text, style = MaterialTheme.typography.labelLarge) }
+        ) { Text(text, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center) }
     } else {
         OutlinedButton(
-            onClick = onClick, enabled = enabled, modifier = modifier.height(52.dp), shape = RoundedCornerShape(14.dp)
-        ) { Text(text, style = MaterialTheme.typography.labelLarge, color = Blue) }
+            onClick = onClick, enabled = enabled, modifier = modifier.heightIn(min = 52.dp), shape = RoundedCornerShape(14.dp)
+        ) { Text(text, style = MaterialTheme.typography.labelLarge, color = Blue, textAlign = TextAlign.Center) }
     }
 }
 
