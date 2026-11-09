@@ -2,6 +2,8 @@ package it.borsawatch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,11 +92,11 @@ fun PortfolioScreen(vm: MainViewModel, onOpen: (String) -> Unit, onGoSettings: (
             } else {
                 item { TopFlop(all, onOpen) }
                 item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf("all" to "Tutti", "best" to "Salgono", "worst" to "Scendono", "alerts" to "Avvisi").forEach { (k, label) ->
                             FilterChip(
                                 selected = filter == k, onClick = { filter = k },
-                                label = { Text(label, style = MaterialTheme.typography.bodyMedium) },
+                                label = { Text(label, style = MaterialTheme.typography.bodyMedium, maxLines = 1, softWrap = false) },
                                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BlueSoft)
                             )
                         }

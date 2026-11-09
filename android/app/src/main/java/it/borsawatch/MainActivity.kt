@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -120,7 +121,7 @@ fun BorsaRoot(vm: MainViewModel) {
                                     Icon(icons[i], contentDescription = label)
                                 }
                             },
-                            label = { Text(label) },
+                            label = { Text(label, maxLines = 1, softWrap = false, fontSize = 12.sp) },
                             colors = NavigationBarItemDefaults.colors(indicatorColor = BlueSoft, selectedIconColor = BlueDeep, selectedTextColor = BlueDeep)
                         )
                     }
