@@ -36,6 +36,19 @@ def test_validate_args_coercion_and_errors():
         T.validate_args("inesistente", {})
 
 
+def test_reorder_tools(eng):
+    first = [t["sym"] for t in eng.store.tickers()]
+    T.run(eng, "move_ticker", dict(sym=first[0], where="bottom"))
+    assert [t["sym"] for t in eng.store.tickers()][-1] == first[0]
+    T.run(eng, "move_ticker", dict(sym=first[0], where="top"))
+    assert [t["sym"] for t in eng.store.tickers()][0] == first[0]
+    with pytest.raises(T.ToolError):
+        T.run(eng, "move_ticker", dict(sym="NONESISTE", where="top"))
+    T.run(eng, "sort_tickers", {})
+    names = [t["name"].lower() for t in eng.store.tickers()]
+    assert names == sorted(names)
+
+
 def test_manual_tools_work_without_ai(eng):
     T.run(eng, "add_ticker", dict(sym="msft", name="Microsoft"))
     assert eng.store.has_ticker("MSFT")

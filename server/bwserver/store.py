@@ -81,20 +81,29 @@ class Store:
         return n > 0
 
     def move_ticker(self, sym, where):
-        """where: 'top', 'up' o 'down'."""
+        """where: 'top', 'up', 'down' o 'bottom'."""
         sym = sym.upper()
         order = [t["sym"] for t in self.tickers()]
         if sym not in order:
             return False
         i = order.index(sym)
         order.pop(i)
-        j = {"top": 0, "up": max(i - 1, 0), "down": min(i + 1, len(order))}.get(where, i)
+        j = {"top": 0, "up": max(i - 1, 0), "down": min(i + 1, len(order)), "bottom": len(order)}.get(where, i)
         order.insert(j, sym)
+        self._save_order(order)
+        return True
+
+    def sort_tickers(self):
+        """Mette tutta la lista in ordine alfabetico per nome (l'ordine di prima si perde)."""
+        order = [t["sym"] for t in sorted(self.tickers(), key=lambda t: (t["name"] or t["sym"]).lower())]
+        self._save_order(order)
+        return len(order)
+
+    def _save_order(self, order):
         with self.lock:
             for pos, s in enumerate(order):
                 self.db.execute("UPDATE tickers SET pos=? WHERE sym=?", (pos, s))
             self.db.commit()
-        return True
 
     # ---- avvisi ----
     def alerts(self):

@@ -201,16 +201,26 @@ def remove_ticker(eng, sym):
 def _pv_move(eng, sym, where):
     if not eng.store.has_ticker(sym):
         raise ToolError(f"{sym.upper()} non è nella lista")
-    return {"top": "Mettere in cima", "up": "Spostare su", "down": "Spostare giù"}[where] + f" {sym.upper()}"
+    return {"top": "Mettere in cima", "up": "Spostare su", "down": "Spostare giù", "bottom": "Mettere in fondo"}[where] + f" {sym.upper()}"
 
 
-@tool("move_ticker", "Cambia l'ordine di un titolo nella lista.",
-      {"sym": P("string", "codice del titolo"), "where": P("string", "dove", enum=["top", "up", "down"])},
+@tool("move_ticker", "Cambia l'ordine di un titolo nella lista: in cima, in fondo, di un posto su o di un posto giù.",
+      {"sym": P("string", "codice del titolo"), "where": P("string", "dove", enum=["top", "up", "down", "bottom"])},
       mutating=True, preview=_pv_move)
 def move_ticker(eng, sym, where):
     if not eng.store.move_ticker(sym, where):
         raise ToolError(f"{sym.upper()} non è nella lista")
     return {"ok": True}
+
+
+def _pv_sort(eng):
+    return "Mettere tutta la lista in ordine alfabetico per nome (l'ordine attuale andrà perso)"
+
+
+@tool("sort_tickers", "Mette tutta la lista dei titoli in ordine alfabetico per nome. L'ordine scelto prima si perde.",
+      {}, mutating=True, preview=_pv_sort)
+def sort_tickers(eng):
+    return {"ok": True, "ordinati": eng.store.sort_tickers()}
 
 
 def _valid_alert(sym, op, value):

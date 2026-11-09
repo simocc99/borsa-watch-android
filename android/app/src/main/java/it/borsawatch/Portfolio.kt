@@ -26,6 +26,9 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
@@ -51,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,21 +65,33 @@ fun PortfolioScreen(vm: MainViewModel, onOpen: (String) -> Unit, onGoSettings: (
     var filter by rememberSaveable { mutableStateOf("all") }
     var query by rememberSaveable { mutableStateOf("") }
     var adding by rememberSaveable { mutableStateOf(false) }
+    var sort by rememberSaveable { mutableStateOf("mine") }       // mine = ordine scelto dall'utente
+    var editing by rememberSaveable { mutableStateOf(false) }
 
     val all = snap?.tickers ?: emptyList()
-    val shown = remember(all, filter, query) {
+    val shown = remember(all, filter, query, sort) {
         var l = all
         if (query.isNotBlank()) {
             val q = query.trim().lowercase()
             l = l.filter { it.name.lowercase().contains(q) || it.sym.lowercase().contains(q) }
         }
-        when (filter) {
+        l = when (filter) {
             "best" -> l.filter { it.chg != null }.sortedByDescending { it.chg }
             "worst" -> l.filter { it.chg != null }.sortedBy { it.chg }
             "alerts" -> l.filter { it.alerts.isNotEmpty() }
             else -> l
         }
+        if (filter == "all" || filter == "alerts") {
+            when (sort) {
+                "name" -> l.sortedBy { it.name.lowercase() }
+                "chg" -> l.sortedByDescending { it.chg ?: Double.NEGATIVE_INFINITY }
+                else -> l
+            }
+        } else l
     }
+    // lo spostamento ha senso solo sulla lista completa, nell'ordine scelto da te
+    val canEdit = sort == "mine" && filter == "all" && query.isBlank()
+    val edit = editing && canEdit
 
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
@@ -97,6 +113,26 @@ fun PortfolioScreen(vm: MainViewModel, onOpen: (String) -> Unit, onGoSettings: (
                             FilterChip(
                                 selected = filter == k, onClick = { filter = k },
                                 label = { Text(label, style = MaterialTheme.typography.bodyMedium, maxLines = 1, softWrap = false) },
+                                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BlueSoft)
+                            )
+                        }
+                    }
+                }
+                item {
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        AssistChip(
+                            onClick = { sort = when (sort) { "mine" -> "name"; "name" -> "chg"; else -> "mine" } },
+                            label = {
+                                Text(
+                                    when (sort) { "name" -> "Ordine: A–Z"; "chg" -> "Ordine: variazione"; else -> "Ordine: la mia lista" },
+                                    style = MaterialTheme.typography.bodyMedium, maxLines = 1, softWrap = false
+                                )
+                            }
+                        )
+                        if (canEdit) {
+                            FilterChip(
+                                selected = editing, onClick = { editing = !editing },
+                                label = { Text(if (editing) "Fatto" else "Cambia ordine", style = MaterialTheme.typography.bodyMedium, maxLines = 1, softWrap = false) },
                                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BlueSoft)
                             )
                         }
@@ -125,7 +161,9 @@ fun PortfolioScreen(vm: MainViewModel, onOpen: (String) -> Unit, onGoSettings: (
                 } else if (shown.isEmpty()) {
                     item { EmptyState("Nessun titolo", "Nessun titolo corrisponde a questa ricerca.") }
                 }
-                items(shown, key = { it.sym }) { t -> TickerCard(t, onClick = { onOpen(t.sym) }) }
+                items(shown, key = { it.sym }) { t ->
+                    if (edit) EditCard(vm, t) else TickerCard(t, onClick = { onOpen(t.sym) })
+                }
             }
         }
         if (vm.configured) {
@@ -139,6 +177,24 @@ fun PortfolioScreen(vm: MainViewModel, onOpen: (String) -> Unit, onGoSettings: (
         }
     }
     if (adding) AddTickerDialog(vm, onDismiss = { adding = false })
+}
+
+/** Scheda in modalità «Cambia ordine»: sposta il titolo senza aprirlo. */
+@Composable
+private fun EditCard(vm: MainViewModel, t: Tick) {
+    Card(
+        shape = RoundedCornerShape(18.dp), colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp), modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(t.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                BigButton("In cima", { vm.moveTicker(t.sym, "top") }, Modifier.weight(1f), filled = false)
+                BigButton("Su", { vm.moveTicker(t.sym, "up") }, Modifier.weight(1f), filled = false)
+                BigButton("Giù", { vm.moveTicker(t.sym, "down") }, Modifier.weight(1f), filled = false)
+            }
+        }
+    }
 }
 
 @Composable

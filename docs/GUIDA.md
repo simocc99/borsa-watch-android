@@ -37,6 +37,14 @@ Se hai un antivirus (es. Norton) che lo blocca: aggiungi `C:\BorsaWatch\BorsaSer
 
 Per avere il widget con i primi 5 titoli: tieni premuto sulla schermata Home -> Widget -> Borsa Watch.
 
+### Aggiungere, togliere e mettere in ordine i titoli
+
+- **Aggiungere:** scheda Titoli -> **Aggiungi titolo**, scrivi il nome (es. Enel) e tocca il risultato.
+- **Togliere:** tocca il titolo, in fondo **Togli dalla lista**.
+- **Ordine della lista:** nella scheda Titoli tocca **Cambia ordine**: su ogni titolo compaiono **In cima**, **Su** e **Giù**. Quando hai finito tocca **Fatto**.
+- **Solo guardare in un altro ordine:** il pulsante **Ordine** alterna *la mia lista*, *A-Z* e *variazione*. Non cambia la lista salvata.
+- Con l'assistente puoi dire, per esempio, «metti Enel in cima», «metti Eni in fondo» oppure «ordina la lista dalla A alla Z». L'ordine alfabetico fa perdere l'ordine scelto prima, quindi l'assistente chiede sempre conferma.
+
 ## 3. Assistente AI (facoltativo, gratis)
 
 1. Vai su <https://openrouter.ai>, crea un account e poi **Keys -> Create key**.
